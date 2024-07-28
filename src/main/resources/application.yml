@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/One
+    username: root
+    password: dongyang
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    open-in-view: false
+    show-sql: true
+    hibernate:
+      ddl-auto: create
+      use-new-id-generator-mapping: false
+
+  jwt :
+    header: Authorization
+    secret: efnsoifh32y9t8y4rghefaseoifhosbxcjkvuiwrfhjweanbiv3892bvskjdvkjsbvriguhjdbqiasdhf9283GRERgjhfv3i9138NDVSIREg
+    token-validity-in-seconds:
+  mvc:
+    locale:
+      timezone: Asia/Seoul
