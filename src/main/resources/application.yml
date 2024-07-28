@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/One
-    username: root
-    password: dongyang
+    url: jdbc:mysql://localhost:3306/
+    username: 
+    password: 
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     open-in-view: false
