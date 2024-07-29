@@ -36,9 +36,9 @@ public class JWTUtil {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("role", String.class);
     }
 
-    public String getName(String token) {
+    public String getCompany(String token) {
 
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("name", String.class);
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("company", String.class);
     }
 
     //토큰 내용(Payload) 인증 메소드
@@ -46,8 +46,8 @@ public class JWTUtil {
     public Boolean isExpired(String token) {
 
         try{
-            //Date expiration = extractAllClaims(token).getExpiration();
-            //return expiration.before(new Date(System.currentTimeMillis() - CLOCK_SKEW));
+            //DateEntity expiration = extractAllClaims(token).getExpiration();
+            //return expiration.before(new DateEntity(System.currentTimeMillis() - CLOCK_SKEW));
             return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date(System.currentTimeMillis() - CLOCK_SKEW));
         } catch(Exception e){
             System.err.println("Error extracting expiration date from token: " + e.getMessage());

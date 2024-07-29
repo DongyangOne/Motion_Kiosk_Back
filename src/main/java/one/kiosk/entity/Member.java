@@ -12,8 +12,8 @@ import one.kiosk.jwt.MemberRole;
 @AllArgsConstructor
 @Builder
 @Data
-@Table(name = "members")
-public class Member {
+@Table(name = "tbl_admin")
+public class Member extends DateEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,6 +22,8 @@ public class Member {
     private String username;
 
     private String password;
+
+    private String company;
 
     private MemberRole role;
 }
