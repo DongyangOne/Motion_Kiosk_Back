@@ -65,6 +65,7 @@ public class JWTFilter extends OncePerRequestFilter {
             // 따라서 임시 비밀번호 설정!
             member.setPassword("임시 비밀번호");
             member.setRole(MemberRole.valueOf(role));
+            member.setCompany(company);
 
             //UserDetails에 회원 정보 객체 담기
             CustomUserDetails customUserDetails = new CustomUserDetails(member);

@@ -3,22 +3,23 @@ package one.kiosk.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
-import lombok.Getter;
+import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
-@Getter
-@EntityListeners(AuditingEntityListener.class)
 @MappedSuperclass
+@EntityListeners(AuditingEntityListener.class)
+@Data
 public class DateEntity {
 
     @CreatedDate
-    @Column(updatable = false)
-    private LocalDateTime createDate;
+    @Column(name = "created", updatable = false)
+    private LocalDateTime create;
 
     @LastModifiedDate
-    private LocalDateTime updateDate;
+    @Column(name = "updated")
+    private LocalDateTime update;
 }

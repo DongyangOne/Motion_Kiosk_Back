@@ -40,27 +40,6 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        /*http
-                .cors((cors) -> cors
-                        .configurationSource(new CorsConfigurationSource(){
-
-                            @Override
-                            public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-
-                                CorsConfiguration configuration = new CorsConfiguration();
-
-                                configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
-                                configuration.setAllowedMethods(Collections.singletonList("*"));
-                                configuration.setAllowCredentials(true);
-                                configuration.setAllowedHeaders(Collections.singletonList("*"));
-                                configuration.setMaxAge(3600L);
-
-                                configuration.setExposedHeaders(Collections.singletonList("Authorization"));
-
-                                return configuration;
-                            }
-                        }));*/
-
         //csrf disable
         http.csrf((auth) -> auth.disable());
 
@@ -72,8 +51,8 @@ public class SecurityConfig {
 
         //경로별 인가 작업
         http.authorizeHttpRequests((auth) -> auth
-                .requestMatchers("/api/users","/api/users/login", "/api/users/join").permitAll() // 회원가입, 로그인 인증 X
-                .requestMatchers("/api/users/admin").hasRole("ADMIN")// 특정 권한을 가지는 사용자만 접근
+                .requestMatchers("/users","/users/login", "/users/join").permitAll() // 회원가입, 로그인 인증 X
+                .requestMatchers("/users/admin").hasRole("ADMIN")// 특정 권한을 가지는 사용자만 접근
                 .anyRequest().authenticated()); // 그 외 요청들은 인증된 사용자 (유효한 jwt를 가지고 있는)만 접근
 
         //JWTFilter 등록, 로그인 필터 전에 동작

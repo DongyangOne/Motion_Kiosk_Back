@@ -46,8 +46,6 @@ public class JWTUtil {
     public Boolean isExpired(String token) {
 
         try{
-            //DateEntity expiration = extractAllClaims(token).getExpiration();
-            //return expiration.before(new DateEntity(System.currentTimeMillis() - CLOCK_SKEW));
             return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date(System.currentTimeMillis() - CLOCK_SKEW));
         } catch(Exception e){
             System.err.println("Error extracting expiration date from token: " + e.getMessage());
@@ -66,11 +64,12 @@ public class JWTUtil {
     }
 
     //토근 생성
-    public String createJwt(String username, String role) {
+    public String createJwt(String username, String company, String role) {
 
         return Jwts.builder()
                 .claim("username", username)
                 .claim("role", role)
+                .claim("company", company)
                 .issuedAt(new Date(System.currentTimeMillis())) //생성일자
                 .expiration(new Date(System.currentTimeMillis()+ EXPIRATION_TIME)) //만료 일자
                 .signWith(secretKey)

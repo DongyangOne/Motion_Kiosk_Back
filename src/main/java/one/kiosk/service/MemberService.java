@@ -13,7 +13,6 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class MemberService {
 
     private final MemberJpaRepository memberJpaRepository;
@@ -43,13 +42,5 @@ public class MemberService {
         }
 
         return findMember;
-    }
-
-    public Member getLoginMemberById(Long memberId){
-        if(memberId == null) return null;
-
-        Optional<Member> findMember = memberJpaRepository.findById(memberId);
-        return findMember.orElse(null);
-
     }
 }

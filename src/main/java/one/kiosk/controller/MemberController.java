@@ -1,92 +1,89 @@
 package one.kiosk.controller;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import one.kiosk.dto.*;
 import one.kiosk.entity.Member;
 import one.kiosk.jwt.JWTUtil;
-import one.kiosk.repository.MemberJpaRepository;
 import one.kiosk.service.MemberService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
-import java.util.Iterator;
-
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/users")
+@RequestMapping("/users")
 public class MemberController {
 
     private final MemberService memberService;
     private final JWTUtil jwtUtil;
-    private final MemberJpaRepository memberJpaRepository;
-
-    @GetMapping("/")
-    public HomeResponseDto home() {
-        HomeResponseDto response = new HomeResponseDto();
-
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        Iterator<? extends GrantedAuthority> iter = authorities.iterator();
-        GrantedAuthority auth = iter.next();
-        String role = auth.getAuthority();
-
-        response.setUsername(username);
-        response.setRole(role);
-
-        return response;
-    }
-
-    @GetMapping("/join")
-    public RequestJoinDto joinPage() {
-        return new RequestJoinDto();
-    }
-
 
     @PostMapping("/join")
-    public JoinResponseDto join(@RequestBody RequestJoinDto joinRequest, BindingResult bindingResult) {
-        JoinResponseDto response = new JoinResponseDto();
+    public ResponseEntity<ApiResponse<String>> join(@RequestBody RequestJoinDto joinRequest, BindingResult bindingResult) {
 
-        // ID 중복 여부 확인
+        // 중복된 ID 체크
         if (memberService.checkLoginIdDuplicate(joinRequest.getUsername())) {
-            response.setMessage("ID가 존재합니다.");
-            return response;
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(new ApiResponse<>(false, "ID가 이미 존재합니다.", null));
         }
 
-        // 비밀번호 = 비밀번호 체크 여부 확인
-        if (!joinRequest.getPassword().equals(joinRequest.getPasswordCheck())) {
-            response.setMessage("비밀번호가 일치하지 않습니다.");
-            return response;
-        }
-
-        // 에러가 존재하지 않을 시 joinRequest 통해서 회원가입 완료
+        // 회원가입 처리
         memberService.securityJoin(joinRequest);
 
-        // 회원가입 시 홈 화면으로 이동
-        response.setMessage("회원가입 성공");
-        return response;
+        // 회원가입 성공
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ApiResponse<>(true, "회원가입 성공", null));
     }
 
     @PostMapping("/login")
-    public LoginResponseDto login(@RequestBody RequestLoginDto loginRequest) {
-        LoginResponseDto response = new LoginResponseDto();
+    public ResponseEntity<ApiResponse<String>> login(@RequestBody RequestLoginDto loginRequest){
 
+        // 로그인 처리
         Member member = memberService.login(loginRequest);
 
+        // 로그인 실패 (ID 또는 비밀번호가 일치하지 않음)
         if (member == null) {
-            response.setMessage("ID 또는 비밀번호가 일치하지 않습니다!");
-            return response;
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ApiResponse<>(false, "ID 또는 비밀번호가 일치하지 않습니다!", null));
         }
 
-        String token = jwtUtil.createJwt(member.getUsername(), String.valueOf(member.getRole()));
-        response.setToken(token);
-        response.setMessage("로그인 성공");
-        return response;
+        // JWT 생성
+        String token = jwtUtil.createJwt(member.getUsername(), member.getCompany(), String.valueOf(member.getRole()));
+
+        // 로그인 성공 및 JWT 반환
+        return ResponseEntity.ok(new ApiResponse<>(true, "로그인 성공", token));
     }
 
+    @GetMapping("/info")
+    @Transactional
+    public ResponseEntity<ApiResponse<InfoDto>> memberInfo(Authentication auth) {
+
+        // 인증된 사용자 정보가 없을 때
+        if (auth == null || auth.getPrincipal() == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse<>(false, "회원 정보를 찾을 수 없습니다.", null));
+        }
+
+        CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+        Member loginMember = userDetails.getMember();
+
+        // 필요한 필드만 DTO로 변환
+        InfoDto memberInfoDto = new InfoDto(
+                loginMember.getUsername(),
+                loginMember.getCompany(),
+                loginMember.getRole()
+        );
+
+        // 회원 정보 조회 성공
+        return ResponseEntity.ok(new ApiResponse<>(true, "회원 정보 조회 성공", memberInfoDto));
+    }
+
+
+    @GetMapping("/admin")
+    public ResponseEntity<ApiResponse<String>> adminPage() {
+
+        return ResponseEntity.ok(new ApiResponse<>(true, "인가 성공!", null));
+    }
 }

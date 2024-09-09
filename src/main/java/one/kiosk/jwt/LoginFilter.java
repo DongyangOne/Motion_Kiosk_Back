@@ -16,7 +16,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 @AllArgsConstructor
-public class LoginFilter extends UsernamePasswordAuthenticationFilter {
+public class LoginFilter extends UsernamePasswordAuthenticationFilter{
 
     private  final AuthenticationManager authenticationManager;
     private final JWTUtil jwtUtil;
@@ -43,6 +43,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         //username 추출
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         String username = customUserDetails.getUsername();
+        String company = customUserDetails.getCompany();
+
 
         //role 추출
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
@@ -51,7 +53,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String role = auth.getAuthority();
 
         // JWTUtil에 token 생성 요청
-        String token = jwtUtil.createJwt(username, role);
+        String token = jwtUtil.createJwt(username, company, role);
 
         // JWT를 response에 담아서 응답 (header 부분에)
         // key : "Authorization"
