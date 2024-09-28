@@ -60,12 +60,4 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter{
         // value : "Bearer " (인증방식) + token
         response.addHeader("Authorization", "Bearer " + token);
     }
-
-    //로그인 실패시 실행하는 메소드
-    @Override
-    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) {
-
-        //로그인 실패시 401 응답 코드 반환
-        response.setStatus(401);
-    }
 }

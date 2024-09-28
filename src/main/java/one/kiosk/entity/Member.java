@@ -1,15 +1,8 @@
 package one.kiosk.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import one.kiosk.jwt.MemberRole;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-
-import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor
@@ -17,6 +10,7 @@ import java.time.LocalDateTime;
 @Builder
 @Data
 @Table(name = "tbl_user")
+@EqualsAndHashCode(callSuper = false) // 부모 클래스의 equals/hashCode 호출 생략
 public class Member extends DateEntity {
 
     @Id
@@ -35,12 +29,4 @@ public class Member extends DateEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
     private MemberRole role;
-
-    @CreatedDate
-    @Column(name = "create", updatable = false)
-    private LocalDateTime create;
-
-    @LastModifiedDate
-    @Column(name = "update")
-    private LocalDateTime update;
 }
