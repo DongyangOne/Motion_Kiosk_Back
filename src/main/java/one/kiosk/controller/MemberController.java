@@ -8,12 +8,10 @@ import one.kiosk.dto.response.ApiResponse;
 import one.kiosk.dto.response.Datadto;
 import one.kiosk.entity.Member;
 import one.kiosk.exception.GlobalExceptionHandler;
-import one.kiosk.jwt.JWTUtil;
 import one.kiosk.repository.MemberJpaRepository;
 import one.kiosk.service.MemberService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,12 +25,6 @@ public class MemberController {
 
     @PostMapping("/join")
     public ResponseEntity<ApiMessageResponse> join(@RequestBody RequestJoinDto joinRequest, BindingResult bindingResult) {
-
-        // 중복된 ID 체크
-        if (memberService.checkLoginIdDuplicate(joinRequest.getUsername())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(new ApiMessageResponse("ID가 이미 존재합니다."));
-        }
 
         // 회원가입 처리
         memberService.securityJoin(joinRequest);
