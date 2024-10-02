@@ -15,7 +15,8 @@ public class Member extends DateEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long user_id;
+    @Column(name = "user_id")
+    private Long id;
 
     @Column(name = "username", nullable = false)
     private String username;

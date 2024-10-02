@@ -12,8 +12,11 @@ import one.kiosk.repository.MemberJpaRepository;
 import one.kiosk.service.MemberService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -48,16 +51,31 @@ public class MemberController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/info/{id}")
+    @GetMapping("/info")
     @Transactional
-    public ResponseEntity<ApiResponse<Member>> memberInfo(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<MemberInfoDto>> memberInfo(@AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        // ID로 회원 정보 조회
-        Member member = memberJpaRepository.findById(id)
+        if (userDetails == null) {
+            throw new GlobalExceptionHandler.CustomAuthenticationException("사용자 정보가 없습니다.");
+        }
+
+        String userName = userDetails.getUsername();
+
+        if (userName == null) {
+            throw new GlobalExceptionHandler.CustomAuthenticationException("사용자 ID가 없습니다.");
+        }
+
+        Member member = Optional.ofNullable(memberJpaRepository.findByUsername(userName))
                 .orElseThrow(() -> new GlobalExceptionHandler.UserNotFoundException("회원 정보를 찾을 수 없습니다."));
 
+
+        MemberInfoDto response = new MemberInfoDto();
+        response.setUsername(member.getUsername());
+        response.setCompany(member.getCompany());
+
+
         // 회원 정보 조회 성공
-        return ResponseEntity.ok(new ApiResponse<>("회원 정보 조회 성공", member));
+        return ResponseEntity.ok(new ApiResponse<>("회원 정보 조회 성공", response));
     }
 
 

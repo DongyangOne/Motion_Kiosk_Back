@@ -24,12 +24,16 @@ public class CustomUserDetails implements UserDetails {
         collection.add(new GrantedAuthority() {
             @Override
             public String getAuthority() {
-                // 앞에 "ROLE_" 접두사 필수 !
+                // 앞에 "ROLE_" 접두사 필수
                 return "ROLE_" + member.getRole();
             }
         });
 
         return collection;
+    }
+
+    public Long getId() {
+        return member.getId();
     }
 
     @Override
