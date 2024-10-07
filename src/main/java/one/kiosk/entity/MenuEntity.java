@@ -32,12 +32,8 @@ public class MenuEntity extends DateEntity {
     @Column(name = "category", nullable = false)
     private String category;
 
+    //jwt 토큰에서 추출한 username을 저장
+    @Column(name = "username", nullable = false)
+    private String username;
 
-    @CreatedDate
-    @Column(name = "create", updatable = false)
-    private LocalDateTime create;
-
-    @LastModifiedDate
-    @Column(name = "update")
-    private LocalDateTime update;
 }

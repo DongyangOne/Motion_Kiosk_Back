@@ -48,6 +48,31 @@ public class GlobalExceptionHandler {
         }
     }
 
+    // 내부 클래스 : 메뉴 crud 예외들
+    public static class MenuUplaodException extends RuntimeException {
+        public MenuUplaodException(String message) {super(message);}
+    }
+
+    public static class MenuNotFoundException extends RuntimeException {
+        public MenuNotFoundException(String message) {super(message);}
+    }
+
+    public static class MenuNotExistException extends RuntimeException {
+        public MenuNotExistException(String message) {super(message);}
+    }
+
+    public static class MenuUpdateException extends RuntimeException {
+        public MenuUpdateException(String message) {super(message);}
+    }
+
+    public static class MenuDeleteException extends RuntimeException {
+        public MenuDeleteException(String message) {super(message);}
+    }
+
+    public static class UserUnmatchException extends RuntimeException {
+        public UserUnmatchException(String message) {super(message);}
+    }
+
     // 예외 처리 메서드들
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ApiMessageResponse> handleUserNotFoundException(UserNotFoundException ex) {
@@ -104,5 +129,41 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiMessageResponse> handleGeneralException(Exception ex) {
         logger.error("Unhandled Exception: ", ex);
         return createResponse(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류가 발생했습니다.");
+    }
+
+    @ExceptionHandler(MenuUplaodException.class)
+    public ResponseEntity<ApiMessageResponse> handleMenuUplaodException(MenuUplaodException ex) {
+        logger.error("MenuUplaodException: ", ex);
+        return createResponse(HttpStatus.BAD_REQUEST,"메뉴 등록에 실패하였습니다.");
+    }
+
+    @ExceptionHandler(MenuNotFoundException.class)
+    public ResponseEntity<ApiMessageResponse> handleMenuNotFoundException(MenuNotFoundException ex) {
+        logger.error("MenuNotFoundException: ", ex);
+        return createResponse(HttpStatus.NOT_FOUND,ex.getMessage());
+    }
+
+    @ExceptionHandler(MenuNotExistException.class)
+    public ResponseEntity<ApiMessageResponse> handleMenuNotExistException(MenuNotExistException ex) {
+        logger.error("MenuNotExistException: ", ex);
+        return createResponse(HttpStatus.NOT_FOUND,"등록된 메뉴가 없습니다.");
+    }
+
+    @ExceptionHandler(MenuUpdateException.class)
+    public ResponseEntity<ApiMessageResponse> handleMenuUpdateException(MenuUpdateException ex) {
+        logger.error("MenuUpdateException: ", ex);
+        return createResponse(HttpStatus.BAD_REQUEST, "메뉴를 수정하지 못했습니다");
+    }
+
+    @ExceptionHandler(MenuDeleteException.class)
+    public ResponseEntity<ApiMessageResponse> handleMenuDeleteException(MenuDeleteException ex) {
+        logger.error("MenuDeleteException: ", ex);
+        return createResponse(HttpStatus.BAD_REQUEST,"메뉴를 삭제하지 못했습니다.");
+    }
+
+    @ExceptionHandler(UserUnmatchException.class)
+    public ResponseEntity<ApiMessageResponse> handleUserUnmatchException(UserUnmatchException ex) {
+        logger.error("UserUnmatchException : ", ex);
+        return createResponse(HttpStatus.BAD_REQUEST,"해당 메뉴에 접근 권한이 없습니다.");
     }
 }

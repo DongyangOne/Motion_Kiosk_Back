@@ -10,20 +10,11 @@ import one.kiosk.jwt.JWTUtil;
 @Data
 @AllArgsConstructor
 @Builder
-public class MenuUploadDto {
+public class MenuReturnDto {
     private String menuname;
     private int price;
     private String category;
-    private String username;
-
-
-    public MenuEntity toMenuEntity() {
-        return MenuEntity.builder()
-                .menuname(this.menuname)
-                .price(this.price)
-                .category(this.category)
-                .username(this.username).build();
-    }
+    
 
 }
 
