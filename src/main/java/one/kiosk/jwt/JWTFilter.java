@@ -59,12 +59,14 @@ public class JWTFilter extends OncePerRequestFilter {
             }
 
             // 토큰에서 사용자 정보 추출
+            Long adminId = jwtUtil.getId(token);
             String username = jwtUtil.getUsername(token);
             String role = jwtUtil.getRole(token);
             String company = jwtUtil.getCompany(token);
 
             // Member 객체 생성
             Member member = new Member();
+            member.setId(adminId);
             member.setUsername(username);
             member.setPassword("임시 비밀번호"); // 실제 비밀번호는 필요하지 않음
             member.setRole(MemberRole.valueOf(role)); // Enum 변환

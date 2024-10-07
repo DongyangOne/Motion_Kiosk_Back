@@ -22,6 +22,9 @@ public class JWTUtil {
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes()); // HS256 알고리즘에 적합한 SecretKey 생성
     }
 
+    //JWT 토큰에서 id 추출
+    public Long getId(String token) {return  extractAllClaims(token).get("id", Long.class);}
+
     // JWT 토큰에서 username 추출
     public String getUsername(String token) {
         return extractAllClaims(token).get("username", String.class);
@@ -72,8 +75,9 @@ public class JWTUtil {
     }
 
     // JWT 토큰 생성 메서드
-    public String createJwt(String username, String company, String role) {
+    public String createJwt(Long id,String username, String company, String role) {
         return Jwts.builder()
+                .claim("id",id)
                 .claim("username", username)
                 .claim("role", role)
                 .claim("company", company)

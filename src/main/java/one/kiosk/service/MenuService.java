@@ -29,9 +29,10 @@ public class MenuService {
     //메뉴 등록
     public MenuEntity upload(MenuUploadDto menuUploadDto, String token) {
 
-        //토큰에서 유저 이름 추출 후 메뉴 테이블에 로그인한 유저 이름 저장
-        String username = jwtUtil.getUsername(token);
-        menuUploadDto.setUsername(username);
+        //토큰에서 유저 id 추출 후 메뉴 entity에 저장
+        Long adminId = jwtUtil.getId(token);
+
+        menuUploadDto.setAdminId(adminId);
         MenuEntity menuEntity = menuJpaRepository.save(menuUploadDto.toMenuEntity());
         //메뉴 등록 진행 중, 오류가 발생하면 throw error
         try{
@@ -44,14 +45,14 @@ public class MenuService {
 
     //메뉴 검색. dto변환 필요
     public MenuEntity find(Long id,String token) {
-        String username = jwtUtil.getUsername(token);
-        logger.info("JWT에서 추출된 username: " + username);
+        Long adminId = jwtUtil.getId(token);
+
         Optional<MenuEntity> OpmenuEntity = menuJpaRepository.findById(id);
 
         if(OpmenuEntity.isPresent()){
             MenuEntity menuEntity = OpmenuEntity.get();
 
-            if(!menuEntity.getUsername().equals(username)){
+            if(!menuEntity.getAdminId().equals(adminId)){
                 throw new GlobalExceptionHandler.UserUnmatchException("해당 메뉴에 접근 권한이 없습니다.");
             }
             return menuEntity;
@@ -61,7 +62,7 @@ public class MenuService {
 
     //메뉴 수정. 성공시 true, 실패시 throw error
     public void update(MenuUpdateDto menuUpdateDto, String token) {
-        String username = jwtUtil.getUsername(token);
+        Long adminId = jwtUtil.getId(token);
 
         Optional<MenuEntity> OpMenuEntity = Optional.ofNullable(menuJpaRepository.findByMenuId(menuUpdateDto.getId()));
 
@@ -69,8 +70,8 @@ public class MenuService {
             // optional에서 entity값 추출
             MenuEntity menuEntity = OpMenuEntity.get();
 
-            //findByMenuId를 통해 찾은 menuEntity의 username과 토큰에서 추출한 username을 비교. 일치하지 않으면 에러 throw
-            if(!menuEntity.getUsername().equals(username)) {
+            //findByMenuId를 통해 찾은 menuEntity의 menuId과 토큰에서 추출한 adminId를 비교. 일치하지 않으면 에러 throw
+            if(!menuEntity.getAdminId().equals(adminId)) {
                 throw new GlobalExceptionHandler.UserUnmatchException("해당 메뉴에 접근 권한이 없습니다.");
             }
 
@@ -89,14 +90,14 @@ public class MenuService {
 
     //메뉴 삭제. 실패시 throw error
     public void delete(Long id, String token) {
-        String username = jwtUtil.getUsername(token);
+        Long adminId = jwtUtil.getId(token);
         Optional<MenuEntity> OpMenuEntity = menuJpaRepository.findById(id);
 
         if(OpMenuEntity.isPresent()){
             MenuEntity menuEntity = OpMenuEntity.get();
 
-            //findByMenuId를 통해 찾은 menuEntity의 username과 토큰에서 추출한 username을 비교. 일치하지 않으면 에러 throw
-            if(!menuEntity.getUsername().equals(username)) {
+            //findByMenuId를 통해 찾은 menuEntity의 menuId과 토큰에서 추출한 adminId를 비교. 일치하지 않으면 에러 throw
+            if(!menuEntity.getAdminId().equals(adminId)) {
                 throw new GlobalExceptionHandler.UserUnmatchException("해당 메뉴에 접근 권한이 없습니다.");
             }
             menuJpaRepository.delete(menuEntity);
@@ -108,8 +109,8 @@ public class MenuService {
 
     //전체조회
     public List<MenuUpdateDto> findAll(String token) {
-        String username = jwtUtil.getUsername(token);
-        List<MenuEntity> menuEntities = menuJpaRepository.findAllByUsername(username);
+        Long adminId = jwtUtil.getId(token);
+        List<MenuEntity> menuEntities = menuJpaRepository.findAllByAdminId(adminId);
         List<MenuUpdateDto> menuUpdateDto = new ArrayList<>();
 
         //가게에 메뉴가 존재하지 않을 경우
@@ -122,4 +123,5 @@ public class MenuService {
         }
         return menuUpdateDto;
     }
+
 }

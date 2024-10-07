@@ -10,6 +10,6 @@ import java.util.Optional;
 public interface MenuJpaRepository extends JpaRepository<MenuEntity, Long> {
     MenuEntity findByMenuId(Long menuId);
 
-    List<MenuEntity> findAllByUsername(String username);
+    List<MenuEntity> findAllByAdminId(Long adminId);
 
 }

@@ -14,7 +14,7 @@ public class MenuUploadDto {
     private String menuname;
     private int price;
     private String category;
-    private String username;
+    private Long adminId;
 
 
     public MenuEntity toMenuEntity() {
@@ -22,7 +22,7 @@ public class MenuUploadDto {
                 .menuname(this.menuname)
                 .price(this.price)
                 .category(this.category)
-                .username(this.username).build();
+                .adminId(this.adminId).build();
     }
 
 }

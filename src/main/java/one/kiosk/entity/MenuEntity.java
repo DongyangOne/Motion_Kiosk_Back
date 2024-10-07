@@ -32,8 +32,8 @@ public class MenuEntity extends DateEntity {
     @Column(name = "category", nullable = false)
     private String category;
 
-    //jwt 토큰에서 추출한 username을 저장
-    @Column(name = "username", nullable = false)
-    private String username;
+    //jwt 토큰에서 추출한 id를 저장
+    @Column(name = "admin_id", nullable = false)
+    private Long adminId;
 
 }

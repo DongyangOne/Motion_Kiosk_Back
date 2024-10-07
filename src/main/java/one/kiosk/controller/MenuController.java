@@ -28,9 +28,9 @@ public class MenuController {
     public ResponseEntity<ApiResponse<String>> upload(@RequestHeader("Authorization") String token, @RequestBody MenuUploadDto menuUploadDto) {
 
         //토큰의 "Bearer " 지우기
-        String TokenUsername = token.replace("Bearer ", "");
+        String tokenId = token.replace("Bearer ", "");
 
-        menuService.upload(menuUploadDto, TokenUsername);
+        menuService.upload(menuUploadDto, tokenId);
         //메뉴 등록 성공
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ApiResponse<>(true,"메뉴가 등록되었습니다.",null));
@@ -41,9 +41,9 @@ public class MenuController {
     public ResponseEntity<ApiResponse<MenuReturnDto>> upload(@RequestHeader("Authorization") String token,@PathVariable Long id) {
 
         //토큰의 "Bearer " 지우기
-        String TokenUsername = token.replace("Bearer ", "");
+        String tokenId = token.replace("Bearer ", "");
 
-        MenuEntity menuEntity = menuService.find(id,TokenUsername);
+        MenuEntity menuEntity = menuService.find(id,tokenId);
 
         if (menuEntity == null) {
             throw new GlobalExceptionHandler.MenuNotFoundException("메뉴를 찾을 수 없습니다");
@@ -64,9 +64,8 @@ public class MenuController {
     @GetMapping("/total")
     public ResponseEntity<ApiResponse<List<MenuUpdateDto>>> total(@RequestHeader("Authorization") String token) {
         //토큰의 "Bearer " 지우기
-        String TokenUsername = token.replace("Bearer ", "");
-
-        List<MenuUpdateDto> menuDtos = menuService.findAll(TokenUsername);
+        String tokenId = token.replace("Bearer ", "");
+        List<MenuUpdateDto> menuDtos = menuService.findAll(tokenId);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new ApiResponse<>(true,"전체 메뉴를 조회합니다",menuDtos));
     }
@@ -74,11 +73,9 @@ public class MenuController {
     //메뉴 수정
     @PutMapping("/update")
     public ResponseEntity<ApiResponse<String>> update(@RequestHeader("Authorization") String token, @RequestBody MenuUpdateDto menuUpdateDto) {
-
         //토큰의 "Bearer " 지우기
-        String TokenUsername = token.replace("Bearer ", ""); //토큰의 "Bearer " 지우기
-
-        menuService.update(menuUpdateDto,TokenUsername);
+        String tokenId = token.replace("Bearer ", "");
+        menuService.update(menuUpdateDto,tokenId);
         //수정 완료
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new ApiResponse<>(true,"메뉴정보 수정이 완료되었습니다.",null));
@@ -88,9 +85,8 @@ public class MenuController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<ApiResponse<String>> delete(@RequestHeader("Authorization") String token, @PathVariable Long id) {
         //토큰의 "Bearer " 지우기
-        String TokenUsername = token.replace("Bearer ", "");
-
-        menuService.delete(id,TokenUsername);
+        String tokenId = token.replace("Bearer ", "");
+        menuService.delete(id,tokenId);
         //삭제 성공
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new ApiResponse<>(true,"메뉴를 삭제하였습니다.",null));
