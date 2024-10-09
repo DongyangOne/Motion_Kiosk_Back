@@ -46,6 +46,6 @@ public class MemberService {
         }
 
         // 인증 성공 시 사용자 정보 반환
-        return jwtUtil.createJwt(findMember.getUsername(), findMember.getCompany(), findMember.getRole().name());
+        return jwtUtil.createJwt(findMember.getId(), findMember.getUsername(), findMember.getCompany(), findMember.getRole().name());
     }
 }
