@@ -7,8 +7,6 @@ import lombok.Setter;
 
 @Data
 @Entity
-@Getter
-@Setter
 @Table(name = "tbl_menuoption")
 public class MenuOptionEntity {
     @Id

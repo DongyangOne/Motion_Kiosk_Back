@@ -62,7 +62,7 @@ public class MenuService {
             if(!menuEntity.getAdminId().equals(adminId)){
                 throw new GlobalExceptionHandler.UserUnmatchException("해당 메뉴에 접근 권한이 없습니다.");
             }
-
+            List<MenuOptionReturnDto> menuOptionReturnDtos = menuOptionRepository.findMenuOptions();
             //메뉴 테이블에 저장된 메뉴 아이디를 이용하여 메뉴 url 조회
             String imgUrl = null;
             if(menuEntity.getImageId() != null){
@@ -72,12 +72,7 @@ public class MenuService {
                 }
             }
 
-            List<MenuOptionEntity> menuOptionEntities = menuOptionRepository.findAll();
-            List<MenuOptionReturnDto> menuOptionReturnDtos = new ArrayList<>();
 
-            for(MenuOptionEntity menuOptionEntity : menuOptionEntities){
-                menuOptionReturnDtos.add(MenuOptionReturnDto.toMenuOptionReturnDto(menuOptionEntity));
-            }
             return MenuReturnDto.toMenuReturnDto(menuEntity,imgUrl,menuOptionReturnDtos);
         }
         return null;
@@ -142,16 +137,9 @@ public class MenuService {
             throw new GlobalExceptionHandler.MenuNotExistException("등록된 메뉴가 없습니다");
         }
 
-        //모든 메뉴 옵션 불러오기
-        List<MenuOptionEntity> menuOptionEntities = menuOptionRepository.findAll();
-        List<MenuOptionReturnDto> menuOptionReturnDtos = new ArrayList<>();
-
-        for(MenuOptionEntity menuOptionEntity : menuOptionEntities){
-            menuOptionReturnDtos.add(MenuOptionReturnDto.toMenuOptionReturnDto(menuOptionEntity));
-        }
-
         for (MenuEntity menu : menuEntities) {
             String imgUrl = null;
+            List<MenuOptionReturnDto> menuOptionReturnDtos = menuOptionRepository.findMenuOptions();
 
             //메뉴 테이블의 image id를 통해 이미지 url 가져오기
             if(menu.getImageId() != null){
