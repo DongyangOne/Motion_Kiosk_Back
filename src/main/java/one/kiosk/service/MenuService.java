@@ -2,15 +2,18 @@ package one.kiosk.service;
 
 
 import lombok.RequiredArgsConstructor;
+import one.kiosk.dto.MenuOptionReturnDto;
 import one.kiosk.dto.MenuReturnDto;
 import one.kiosk.dto.MenuUpdateDto;
 import one.kiosk.dto.MenuUploadDto;
 import one.kiosk.entity.Image;
 import one.kiosk.entity.MenuEntity;
+import one.kiosk.entity.MenuOptionEntity;
 import one.kiosk.exception.GlobalExceptionHandler;
 import one.kiosk.jwt.JWTUtil;
 import one.kiosk.repository.ImageRepository;
 import one.kiosk.repository.MenuJpaRepository;
+import one.kiosk.repository.MenuOptionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -29,7 +32,7 @@ public class MenuService {
     private final JWTUtil jwtUtil;
     private static final Logger logger = LoggerFactory.getLogger(MenuService.class); // Logger 생성
     private final ImageRepository imageRepository;
-
+    private final MenuOptionRepository menuOptionRepository;
     //메뉴 등록
     public MenuEntity upload(MenuUploadDto menuUploadDto, String token) {
 
@@ -69,7 +72,13 @@ public class MenuService {
                 }
             }
 
-            return MenuReturnDto.toMenuReturnDto(menuEntity,imgUrl);
+            List<MenuOptionEntity> menuOptionEntities = menuOptionRepository.findAll();
+            List<MenuOptionReturnDto> menuOptionReturnDtos = new ArrayList<>();
+
+            for(MenuOptionEntity menuOptionEntity : menuOptionEntities){
+                menuOptionReturnDtos.add(MenuOptionReturnDto.toMenuOptionReturnDto(menuOptionEntity));
+            }
+            return MenuReturnDto.toMenuReturnDto(menuEntity,imgUrl,menuOptionReturnDtos);
         }
         return null;
     }
@@ -133,6 +142,14 @@ public class MenuService {
             throw new GlobalExceptionHandler.MenuNotExistException("등록된 메뉴가 없습니다");
         }
 
+        //모든 메뉴 옵션 불러오기
+        List<MenuOptionEntity> menuOptionEntities = menuOptionRepository.findAll();
+        List<MenuOptionReturnDto> menuOptionReturnDtos = new ArrayList<>();
+
+        for(MenuOptionEntity menuOptionEntity : menuOptionEntities){
+            menuOptionReturnDtos.add(MenuOptionReturnDto.toMenuOptionReturnDto(menuOptionEntity));
+        }
+
         for (MenuEntity menu : menuEntities) {
             String imgUrl = null;
 
@@ -144,7 +161,7 @@ public class MenuService {
                 }
 
             }
-            menuReturnDto.add(MenuReturnDto.toMenuReturnDto(menu,imgUrl));
+            menuReturnDto.add(MenuReturnDto.toMenuReturnDto(menu,imgUrl,menuOptionReturnDtos));
         }
         return menuReturnDto;
     }
