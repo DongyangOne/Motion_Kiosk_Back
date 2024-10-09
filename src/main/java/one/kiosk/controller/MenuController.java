@@ -43,17 +43,11 @@ public class MenuController {
         //토큰의 "Bearer " 지우기
         String tokenId = token.replace("Bearer ", "");
 
-        MenuEntity menuEntity = menuService.find(id,tokenId);
+        MenuReturnDto menuReturnDto = menuService.find(id,tokenId);
 
-        if (menuEntity == null) {
+        if (menuReturnDto == null) {
             throw new GlobalExceptionHandler.MenuNotFoundException("메뉴를 찾을 수 없습니다");
         }
-        //필요한 필드만 DTO로 변환
-        MenuReturnDto menuReturnDto = new MenuReturnDto(
-                menuEntity.getMenuname(),
-                menuEntity.getPrice(),
-                menuEntity.getCategory()
-        );
 
         //메뉴 검색 성공
         return ResponseEntity.status(HttpStatus.OK)
@@ -62,10 +56,11 @@ public class MenuController {
 
     //메뉴 전체조회
     @GetMapping("/total")
-    public ResponseEntity<ApiResponse<List<MenuUpdateDto>>> total(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<ApiResponse<List<MenuReturnDto>>> total(@RequestHeader("Authorization") String token) {
         //토큰의 "Bearer " 지우기
         String tokenId = token.replace("Bearer ", "");
-        List<MenuUpdateDto> menuDtos = menuService.findAll(tokenId);
+        List<MenuReturnDto> menuDtos = menuService.findAll(tokenId);
+
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new ApiResponse<>(true,"전체 메뉴를 조회합니다",menuDtos));
     }

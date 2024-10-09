@@ -36,4 +36,7 @@ public class MenuEntity extends DateEntity {
     @Column(name = "admin_id", nullable = false)
     private Long adminId;
 
+   @Column(name = "image_id")
+    private Long imageId;
+
 }

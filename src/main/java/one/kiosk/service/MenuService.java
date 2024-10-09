@@ -2,11 +2,14 @@ package one.kiosk.service;
 
 
 import lombok.RequiredArgsConstructor;
+import one.kiosk.dto.MenuReturnDto;
 import one.kiosk.dto.MenuUpdateDto;
 import one.kiosk.dto.MenuUploadDto;
+import one.kiosk.entity.Image;
 import one.kiosk.entity.MenuEntity;
 import one.kiosk.exception.GlobalExceptionHandler;
 import one.kiosk.jwt.JWTUtil;
+import one.kiosk.repository.ImageRepository;
 import one.kiosk.repository.MenuJpaRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +28,7 @@ public class MenuService {
     private final MenuJpaRepository menuJpaRepository;
     private final JWTUtil jwtUtil;
     private static final Logger logger = LoggerFactory.getLogger(MenuService.class); // Logger 생성
+    private final ImageRepository imageRepository;
 
     //메뉴 등록
     public MenuEntity upload(MenuUploadDto menuUploadDto, String token) {
@@ -44,7 +48,7 @@ public class MenuService {
     }
 
     //메뉴 검색. dto변환 필요
-    public MenuEntity find(Long id,String token) {
+    public MenuReturnDto find(Long id,String token) {
         Long adminId = jwtUtil.getId(token);
 
         Optional<MenuEntity> OpmenuEntity = menuJpaRepository.findById(id);
@@ -55,7 +59,17 @@ public class MenuService {
             if(!menuEntity.getAdminId().equals(adminId)){
                 throw new GlobalExceptionHandler.UserUnmatchException("해당 메뉴에 접근 권한이 없습니다.");
             }
-            return menuEntity;
+
+            //메뉴 테이블에 저장된 메뉴 아이디를 이용하여 메뉴 url 조회
+            String imgUrl = null;
+            if(menuEntity.getImageId() != null){
+                Optional<Image> Opimage = imageRepository.findById(menuEntity.getImageId());
+                if(Opimage.isPresent()){
+                    imgUrl = Opimage.get().getImageUrl();
+                }
+            }
+
+            return MenuReturnDto.toMenuReturnDto(menuEntity,imgUrl);
         }
         return null;
     }
@@ -79,6 +93,7 @@ public class MenuService {
             menuEntity.setPrice(menuUpdateDto.getPrice());
             menuEntity.setCategory(menuUpdateDto.getCategory());
             menuEntity.setUpdate(LocalDateTime.now());
+            menuEntity.setImageId(menuEntity.getImageId());
 
             menuJpaRepository.save(menuEntity);
 
@@ -108,10 +123,10 @@ public class MenuService {
     }
 
     //전체조회
-    public List<MenuUpdateDto> findAll(String token) {
+    public List<MenuReturnDto> findAll(String token) {
         Long adminId = jwtUtil.getId(token);
         List<MenuEntity> menuEntities = menuJpaRepository.findAllByAdminId(adminId);
-        List<MenuUpdateDto> menuUpdateDto = new ArrayList<>();
+        List<MenuReturnDto> menuReturnDto = new ArrayList<>();
 
         //가게에 메뉴가 존재하지 않을 경우
         if(menuEntities.isEmpty()){
@@ -119,9 +134,19 @@ public class MenuService {
         }
 
         for (MenuEntity menu : menuEntities) {
-            menuUpdateDto.add(MenuUpdateDto.toMenuUpdateDto(menu));
+            String imgUrl = null;
+
+            //메뉴 테이블의 image id를 통해 이미지 url 가져오기
+            if(menu.getImageId() != null){
+                Optional<Image> Opimage = imageRepository.findById(menu.getImageId());
+                if(Opimage.isPresent()){
+                    imgUrl = Opimage.get().getImageUrl();
+                }
+
+            }
+            menuReturnDto.add(MenuReturnDto.toMenuReturnDto(menu,imgUrl));
         }
-        return menuUpdateDto;
+        return menuReturnDto;
     }
 
 }
