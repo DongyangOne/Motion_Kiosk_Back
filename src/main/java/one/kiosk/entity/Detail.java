@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import one.kiosk.enums.Details;
+import one.kiosk.enums.Options;
 
 @Entity
 @Table(name = "tbl_detail")
@@ -24,7 +24,7 @@ public class Detail extends DateEntity{
     private Order order;
 
     @Column(name = "detail", nullable = false)
-    private Details detail;
+    private Options option;
 
     @Column(name = "price", nullable = false)
     private int price;

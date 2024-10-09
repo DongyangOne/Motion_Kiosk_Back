@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import one.kiosk.enums.Category;
 import one.kiosk.enums.Status;
 
+import java.util.List;
+
 @Entity
 @Table(name = "tbl_menu")
 @Getter
@@ -24,6 +26,9 @@ public class Menu extends DateEntity{
     @JoinColumn(name = "admin_id")
     private Member member;
 
+    @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Option> options;
+
     @Column(name = "name", nullable = false, length = 100)
     private String name;
 
@@ -34,7 +39,10 @@ public class Menu extends DateEntity{
     private Category category;
 
     @Column(name = "status", nullable = false)
-    private Status stauts;
+    private Status status;
+
+    @Column(columnDefinition = "TEXT", nullable = false)
+    private String img;
 
 
 }

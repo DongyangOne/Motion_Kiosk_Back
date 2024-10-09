@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import one.kiosk.entity.Image;
 import one.kiosk.service.ImageService;
+import one.kiosk.vo.img.ImageVo;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +17,7 @@ import java.util.Optional;
 import static com.mysql.cj.conf.PropertyKey.logger;
 
 @RestController
-@RequestMapping("/api/images")
+@RequestMapping("/api2/image")
 @RequiredArgsConstructor
 @Slf4j
 public class ImageController {
@@ -24,15 +25,15 @@ public class ImageController {
     private final ImageService imageService;
 
     // 이미지 업로드 처리
-    @PostMapping("/upload")
-    public ResponseEntity<?> uploadImage(@RequestParam("file") MultipartFile file, @RequestParam("title") String title) {
-        log.debug("파일 업로드 요청 받음 - 파일명: {}, 제목: {}", file.getOriginalFilename(), title);
+    @PostMapping
+    public ResponseEntity<?> uploadImage(@RequestParam("file") MultipartFile file) {
+        log.debug("파일 업로드 요청 받음 - 파일명: {}", file.getOriginalFilename());
 
 
         try {
-            Image savedImage = imageService.saveImage(file, title);
-            log.info("이미지 저장 성공 - 파일명: {}, 이미지 ID: {}", file.getOriginalFilename(), savedImage.getId());
-            return new ResponseEntity<>(savedImage, HttpStatus.OK); // 성공적으로 저장된 이미지 반환
+            String savedImage = imageService.saveImage(file);
+            log.info("이미지 저장 성공 - 파일명: {}", file.getOriginalFilename());
+            return new ResponseEntity<>(new ImageVo(savedImage), HttpStatus.OK); // 성공적으로 저장된 이미지 반환
         } catch (IOException e) {
             log.error("이미지 업로드 실패 - 파일명: {}", file.getOriginalFilename(), e);
             return new ResponseEntity<>("이미지 업로드 실패", HttpStatus.INTERNAL_SERVER_ERROR);

@@ -2,8 +2,10 @@ package one.kiosk.service;
 
 import lombok.RequiredArgsConstructor;
 import one.kiosk.entity.Image;
+import one.kiosk.exception.CustomException;
 import one.kiosk.repository.ImageRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,7 +28,7 @@ public class ImageService {
     private final ImageRepository imageRepository;
 
     // 이미지 저장 메서드
-    public Image saveImage(MultipartFile file, String title) throws IOException {
+    public String saveImage(MultipartFile file) throws IOException {
         String fileName = generateUniqueFileName(file);
         Path filePath = Paths.get(uploadDir, fileName);
 
@@ -43,7 +45,7 @@ public class ImageService {
         Image image = new Image();
         image.setImg(filePath.toString()); // 이미지 경로를 저장
 
-        return imageRepository.save(image);
+        return filePath.toString();
     }
 
     // 모든 이미지 조회 메서드
@@ -73,9 +75,17 @@ public class ImageService {
         return false;
     }
 
+    public Image findImg(Long imgId) {
+        Optional<Image> findImg = imageRepository.findById(imgId);
+        if(findImg.isEmpty()) throw new CustomException("이미지를 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
+        return findImg.get();
+    }
+
     // 파일 이름에 고유한 UUID 추가
     private String generateUniqueFileName(MultipartFile file) {
         String originalFileName = file.getOriginalFilename();
         return UUID.randomUUID().toString() + "_" + originalFileName;
     }
+
+
 }

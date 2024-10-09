@@ -23,6 +23,8 @@ public class GlobalExceptionHandler {
                 .body(new ApiMessageResponse(message));
     }
 
+
+
     // 내부 클래스: 사용자 정의 예외들
     public static class UserNotFoundException extends RuntimeException {
         public UserNotFoundException(String message) {
@@ -49,6 +51,12 @@ public class GlobalExceptionHandler {
     }
 
     // 예외 처리 메서드들
+
+    @ExceptionHandler(CustomException.class)
+    public ResponseEntity<?> handleException(CustomException ex) {
+        return createResponse(ex.getStatus(), ex.getMessage());
+    }
+
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ApiMessageResponse> handleUserNotFoundException(UserNotFoundException ex) {
         logger.error("UserNotFoundException: ", ex);

@@ -1,5 +1,5 @@
 package one.kiosk.enums;
 
-public enum Details {
+public enum Options {
     Ice, Hot, Shot, Light
 }
