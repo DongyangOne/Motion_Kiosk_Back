@@ -30,7 +30,14 @@ public class MenuController {
     @GetMapping
     public ResponseEntity<?> findAllMenu() {
         List<MenuVo> menulist =  menuService.findAllMenu();
-        ApiResponse<?> response = new ApiResponse<>("메뉴를 조회합니다.", menulist);
+        ApiResponse<?> response = new ApiResponse<>("메뉴를 전체 조회합니다.", menulist);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> findMenu(@PathVariable Long id) {
+        MenuVo findMenu = menuService.findMenu(id);
+        ApiResponse<?> response = new ApiResponse<>("메뉴를 조회합니다.", findMenu);
         return ResponseEntity.ok(response);
     }
 
