@@ -2,10 +2,8 @@ package one.kiosk.service;
 
 import lombok.RequiredArgsConstructor;
 import one.kiosk.entity.Image;
-import one.kiosk.exception.CustomException;
 import one.kiosk.repository.ImageRepository;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -75,11 +73,11 @@ public class ImageService {
         return false;
     }
 
-    public Image findImg(Long imgId) {
-        Optional<Image> findImg = imageRepository.findById(imgId);
-        if(findImg.isEmpty()) throw new CustomException("이미지를 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
-        return findImg.get();
-    }
+//    public Image findImg(Long imgId) {
+//        Optional<Image> findImg = imageRepository.findById(imgId);
+//        if(findImg.isEmpty()) throw new CustomException("이미지를 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
+//        return findImg.get();
+//    }
 
     // 파일 이름에 고유한 UUID 추가
     private String generateUniqueFileName(MultipartFile file) {

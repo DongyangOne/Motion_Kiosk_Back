@@ -26,6 +26,21 @@ public class GlobalExceptionHandler {
 
 
     // 내부 클래스: 사용자 정의 예외들
+
+    public static class CustomException extends RuntimeException{
+        private HttpStatus status;
+
+        public CustomException(String message, HttpStatus status) {
+            super(message);
+            this.status = status;
+        }
+
+        public HttpStatus getStatus() {
+            return status;
+        }
+    }
+
+
     public static class UserNotFoundException extends RuntimeException {
         public UserNotFoundException(String message) {
             super(message);
