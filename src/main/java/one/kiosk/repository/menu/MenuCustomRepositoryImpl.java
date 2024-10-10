@@ -75,7 +75,7 @@ public class MenuCustomRepositoryImpl implements MenuCustomRepository{
                         )
                 );
         if(findMenu.size() != 1){
-            throw new GlobalExceptionHandler.CustomException("아이디값을 확인해주세요.", HttpStatus.BAD_REQUEST);
+            throw new GlobalExceptionHandler.CustomException("등록된 메뉴가 아닙니다.", HttpStatus.BAD_REQUEST);
         }
         return findMenu.get(0);
     }
