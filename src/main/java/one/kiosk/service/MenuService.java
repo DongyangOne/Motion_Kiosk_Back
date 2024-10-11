@@ -20,9 +20,8 @@ import org.springframework.stereotype.Service;
 
 import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -66,7 +65,7 @@ public class MenuService {
             //메뉴 테이블에 저장된 메뉴 아이디를 이용하여 메뉴 url 조회
             String imgUrl = null;
             if(menuEntity.getImageId() != null){
-                Optional<Image> Opimage = imageRepository.findById(menuEntity.getImageId());
+                Optional<Image> Opimage = imageRepository.findById(menuEntity.getImageId().getId());
                 if(Opimage.isPresent()){
                     imgUrl = Opimage.get().getImageUrl();
                 }
@@ -129,29 +128,17 @@ public class MenuService {
     //전체조회
     public List<MenuReturnDto> findAll(String token) {
         Long adminId = jwtUtil.getId(token);
-        List<MenuEntity> menuEntities = menuJpaRepository.findAllByAdminId(adminId);
-        List<MenuReturnDto> menuReturnDto = new ArrayList<>();
 
-        //가게에 메뉴가 존재하지 않을 경우
-        if(menuEntities.isEmpty()){
+
+        List<MenuReturnDto> menuReturnDtos = menuJpaRepository.findAllMenuWithOptionsByAdminId(adminId);
+
+        if (menuReturnDtos.isEmpty()) {
             throw new GlobalExceptionHandler.MenuNotExistException("등록된 메뉴가 없습니다");
         }
+        return menuReturnDtos;
 
-        for (MenuEntity menu : menuEntities) {
-            String imgUrl = null;
-            List<MenuOptionReturnDto> menuOptionReturnDtos = menuOptionRepository.findMenuOptions();
-
-            //메뉴 테이블의 image id를 통해 이미지 url 가져오기
-            if(menu.getImageId() != null){
-                Optional<Image> Opimage = imageRepository.findById(menu.getImageId());
-                if(Opimage.isPresent()){
-                    imgUrl = Opimage.get().getImageUrl();
-                }
-
-            }
-            menuReturnDto.add(MenuReturnDto.toMenuReturnDto(menu,imgUrl,menuOptionReturnDtos));
-        }
-        return menuReturnDto;
     }
+
+
 
 }

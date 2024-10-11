@@ -7,6 +7,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -36,7 +37,11 @@ public class MenuEntity extends DateEntity {
     @Column(name = "admin_id", nullable = false)
     private Long adminId;
 
-   @Column(name = "image_id")
-    private Long imageId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "image_id")  // 외래키 설정
+    private Image imageId;
+
+
+
 
 }

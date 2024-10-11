@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import one.kiosk.entity.Image;
 import one.kiosk.entity.MenuEntity;
 import one.kiosk.jwt.JWTUtil;
 
@@ -15,7 +16,7 @@ public class MenuUploadDto {
     private int price;
     private String category;
     private Long adminId;
-    private Long imageId;
+    private Image imageId;
 
 
     public MenuEntity toMenuEntity() {
