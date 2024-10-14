@@ -2,6 +2,7 @@ package one.kiosk.controller;
 
 import lombok.RequiredArgsConstructor;
 import one.kiosk.dto.menu.RequestSaveMenuDto;
+import one.kiosk.dto.menu.RequestUpdateMenuDto;
 import one.kiosk.dto.response.ApiMessageResponse;
 import one.kiosk.dto.response.ApiResponse;
 import one.kiosk.entity.Member;
@@ -39,6 +40,18 @@ public class MenuController {
         MenuVo findMenu = menuService.findMenu(id);
         ApiResponse<?> response = new ApiResponse<>("메뉴를 조회합니다.", findMenu);
         return ResponseEntity.ok(response);
+    }
+
+    @PutMapping
+    public ResponseEntity<?> updateMenu(@RequestBody RequestUpdateMenuDto dto) {
+        menuService.updateMenu(dto);
+        return ResponseEntity.ok(new ApiMessageResponse("메뉴가 수정되었습니다."));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteMenu(@PathVariable Long id) {
+        menuService.deleteMenu(id);
+        return ResponseEntity.ok(new ApiMessageResponse("메뉴가 삭제되었습니다."));
     }
 
 }

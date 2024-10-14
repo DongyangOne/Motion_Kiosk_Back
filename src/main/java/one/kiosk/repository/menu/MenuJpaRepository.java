@@ -7,7 +7,8 @@ import one.kiosk.vo.menu.MenuVo;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface MenuJpaRepository extends JpaRepository<Menu, Long>, MenuCustomRepository{
-
+    Optional<Menu> findById(Long id);
 }

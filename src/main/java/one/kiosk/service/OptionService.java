@@ -7,6 +7,7 @@ import one.kiosk.enums.Options;
 import one.kiosk.repository.menu.OptionJpaRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -15,10 +16,17 @@ public class OptionService {
 
     private final OptionJpaRepository optionJpaRepository;
 
-    public void saveMenuOptions(Menu menu, List<Options> options) {
+    public List<Option> saveMenuOptions(Menu menu, List<Options> options) {
+        List<Option> roptions = new ArrayList<>(options.size());
         for(Options option: options) {
-            optionJpaRepository.save(Option.builder().option(option).menu(menu).build());
+            roptions.add(Option.builder().option(option).menu(menu).build());
         }
+        optionJpaRepository.saveAll(roptions);
+        return roptions;
+    }
+
+    public void deleteByMenuId(Long menuId) {
+        optionJpaRepository.deleteByMenuId(menuId);
     }
 
 }

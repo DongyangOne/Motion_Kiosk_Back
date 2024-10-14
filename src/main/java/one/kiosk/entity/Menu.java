@@ -1,10 +1,7 @@
 package one.kiosk.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import one.kiosk.enums.Category;
 import one.kiosk.enums.Status;
 
@@ -13,6 +10,7 @@ import java.util.List;
 @Entity
 @Table(name = "tbl_menu")
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -44,5 +42,13 @@ public class Menu extends DateEntity{
     @Column(columnDefinition = "TEXT", nullable = false)
     private String img;
 
+    public void setAll(String name, int price, Category category, Status status, String img, List<Option> options) {
+        this.name = name;
+        this.price = price;
+        this.category = category;
+        this.status = status;
+        this.img = img;
+        this.options = options;
+    }
 
 }
